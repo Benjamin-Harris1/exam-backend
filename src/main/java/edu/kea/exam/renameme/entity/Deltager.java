@@ -22,6 +22,7 @@ public class Deltager {
     private String køn;
     private int alder;
     private String klub;
+    private boolean isActive;
 
     @ManyToMany
     private List<Disciplin> discipliner;
@@ -35,5 +36,21 @@ public class Deltager {
         this.discipliner = discipliner;
     }
 
+    public Deltager(Long id, String navn, String køn, int alder, String klub, List<Disciplin> discipliner) {
+        this.id = id;
+        this.navn = navn;
+        this.køn = køn;
+        this.alder = alder;
+        this.klub = klub;
+        this.discipliner = discipliner;
+    }
 
+    public Deltager(String navn, String køn, int alder, String klub, List<Disciplin> discipliner, boolean isActive) {
+        this.navn = navn;
+        this.køn = køn;
+        this.alder = alder;
+        this.klub = klub;
+        this.discipliner = discipliner;
+        this.isActive = isActive;
+    }
 }

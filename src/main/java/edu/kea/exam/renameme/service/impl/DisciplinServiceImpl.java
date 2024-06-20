@@ -23,7 +23,7 @@ public class DisciplinServiceImpl implements DisciplinService {
 
     @Override
     public List<DisciplinDTO> getAllDiscipliner() {
-        return disciplinRepository.findAll().stream()
+        return disciplinRepository.findAllByIsActiveTrue().stream()
                 .map(disciplinMapper::toDTO)
                 .toList();
     }
@@ -31,6 +31,7 @@ public class DisciplinServiceImpl implements DisciplinService {
     @Override
     public DisciplinDTO createDisciplin(DisciplinDTO disciplinDTO) {
         Disciplin disciplin = disciplinMapper.toEntity(disciplinDTO);
+        disciplin.setActive(true);
         return disciplinMapper.toDTO(disciplinRepository.save(disciplin));
     }
 
@@ -50,6 +51,7 @@ public class DisciplinServiceImpl implements DisciplinService {
     public void deleteDisciplin(Long id) {
         Disciplin disciplin = disciplinRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Disciplin ikke fundet"));
-        disciplinRepository.delete(disciplin);
+        disciplin.setActive(false);
+        disciplinRepository.save(disciplin);
     }
 }

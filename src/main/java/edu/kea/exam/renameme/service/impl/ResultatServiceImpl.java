@@ -33,9 +33,17 @@ public class ResultatServiceImpl implements ResultatService {
 
     @Override
     public List<ResultatDTO> getAllResultater() {
-        return resultatRepository.findAll().stream()
+        List<Resultat> resultater = resultatRepository.findAll();
+    
+        if (!resultater.isEmpty() && "Tid".equalsIgnoreCase(resultater.get(0).getResultatType())) {
+            resultater.sort(Comparator.comparing(Resultat::getResultatværdi));
+        } else if (!resultater.isEmpty() && "Afstand".equalsIgnoreCase(resultater.get(0).getResultatType())) {
+            resultater.sort(Comparator.comparing(Resultat::getResultatværdi).reversed());
+        }
+    
+        return resultater.stream()
                 .map(resultatMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

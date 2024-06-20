@@ -23,20 +23,22 @@ public class DeltagerServiceImpl implements DeltagerService {
 
     @Override
     public List<DeltagerDTO> getAllDeltagere() {
-        return deltagerRepository.findAll().stream()
+        return deltagerRepository.findAllByIsActiveTrue().stream()
                 .map(deltagerMapper::toDTO)
                 .toList();
     }
 
     @Override
     public DeltagerDTO getDeltagerById(Long id) {
-        Optional<Deltager> deltager = deltagerRepository.findById(id);
+        Optional<Deltager> deltager = deltagerRepository.findById(id)
+                .filter(Deltager::isActive);
         return deltager.map(deltagerMapper::toDTO).orElseThrow(() -> new RuntimeException("Deltager ikke fundet"));
     }
 
     @Override
     public DeltagerDTO createDeltager(DeltagerDTO deltagerDTO) {
         Deltager deltager = deltagerMapper.toEntity(deltagerDTO);
+        deltager.setActive(true);
         return deltagerMapper.toDTO(deltagerRepository.save(deltager));
     }
 
@@ -57,7 +59,8 @@ public class DeltagerServiceImpl implements DeltagerService {
     public void deleteDeltager(Long id) {
         Deltager deltager = deltagerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Deltager ikke fundet"));
-        deltagerRepository.delete(deltager);
+        deltager.setActive(false);
+        deltagerRepository.save(deltager);
 
     }
 }

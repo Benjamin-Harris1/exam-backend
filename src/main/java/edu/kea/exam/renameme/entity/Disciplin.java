@@ -23,6 +23,8 @@ public class Disciplin {
     @ManyToMany(mappedBy = "discipliner")
     private List<Deltager> deltagere;
 
+    private boolean isActive;
+
     public Disciplin(String navn, String resultatType) {
         this.navn = navn;
         this.resultatType = resultatType;
@@ -33,4 +35,11 @@ public class Disciplin {
         this.navn = navn;
         this.resultatType = resultatType;
     }
+
+    public Disciplin(String navn, String resultatType, boolean isActive) {
+        this.navn = navn;
+        this.resultatType = resultatType;
+        this.isActive = isActive;
+    }
+
 }
