@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -27,13 +28,14 @@ public class Resultat {
 
     private String resultatType;
     private LocalDate dato;
-    private String resultatværdi;
+    private BigDecimal resultatværdi;
 
-    public Resultat(Deltager deltager, Disciplin disciplin, String resultatType, LocalDate dato, String resultatværdi) {
+    public Resultat(Deltager deltager, Disciplin disciplin, String resultatType, LocalDate dato, BigDecimal resultatværdi) {
         this.deltager = deltager;
         this.disciplin = disciplin;
         this.resultatType = resultatType;
         this.dato = dato;
         this.resultatværdi = resultatværdi;
     }
+    
 }

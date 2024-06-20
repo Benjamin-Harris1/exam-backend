@@ -1,18 +1,24 @@
 package edu.kea.exam.renameme.mapper;
 
 import edu.kea.exam.renameme.dto.ResultatDTO;
-import edu.kea.exam.renameme.entity.Deltager;
-import edu.kea.exam.renameme.entity.Disciplin;
 import edu.kea.exam.renameme.entity.Resultat;
 import edu.kea.exam.renameme.repository.DeltagerRepository;
 import edu.kea.exam.renameme.repository.DisciplinRepository;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class ResultatMapper {
 
     private final DeltagerRepository deltagerRepository;
     private final DisciplinRepository disciplinRepository;
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SS");
+    private static final DecimalFormat DISTANCE_FORMATTER = new DecimalFormat("#.##");
 
     public ResultatMapper(DeltagerRepository deltagerRepository, DisciplinRepository disciplinRepository) {
         this.deltagerRepository = deltagerRepository;
@@ -26,22 +32,41 @@ public class ResultatMapper {
         dto.setDisciplinId(resultat.getDisciplin().getId());
         dto.setResultatType(resultat.getResultatType());
         dto.setDato(resultat.getDato());
-        dto.setResultatværdi(resultat.getResultatværdi());
+        dto.setResultatværdi(formatResultatværdi(resultat.getResultatværdi(), resultat.getResultatType()));
         return dto;
     }
 
     public Resultat toEntity(ResultatDTO dto) {
         Resultat resultat = new Resultat();
         resultat.setId(dto.getId());
-        Deltager deltager = deltagerRepository.findById(dto.getDeltagerId())
-                .orElseThrow(() -> new RuntimeException("Deltager not found with id: " + dto.getDeltagerId()));
-        Disciplin disciplin = disciplinRepository.findById(dto.getDisciplinId())
-                .orElseThrow(() -> new RuntimeException("Disciplin not found with id: " + dto.getDisciplinId()));
-        resultat.setDeltager(deltager);
-        resultat.setDisciplin(disciplin);
+        resultat.setDeltager(deltagerRepository.findById(dto.getDeltagerId())
+                .orElseThrow(() -> new RuntimeException("Deltager not found with id: " + dto.getDeltagerId())));
+        resultat.setDisciplin(disciplinRepository.findById(dto.getDisciplinId())
+                .orElseThrow(() -> new RuntimeException("Disciplin not found with id: " + dto.getDisciplinId())));
         resultat.setResultatType(dto.getResultatType());
         resultat.setDato(dto.getDato());
-        resultat.setResultatværdi(dto.getResultatværdi());
+        resultat.setResultatværdi(parseResultatværdi(dto.getResultatværdi(), dto.getResultatType()));
         return resultat;
+    }
+
+    private String formatResultatværdi(BigDecimal resultatværdi, String resultatType) {
+        if ("Tid".equalsIgnoreCase(resultatType)) {
+            long totalSeconds = resultatværdi.longValue();
+            LocalTime time = LocalTime.ofSecondOfDay(totalSeconds);
+            return TIME_FORMATTER.format(time);
+        } else if ("Afstand".equalsIgnoreCase(resultatType)) {
+            return DISTANCE_FORMATTER.format(resultatværdi) + " m";
+        }
+        return resultatværdi.toString();
+    }
+
+    private BigDecimal parseResultatværdi(String resultatværdi, String resultatType) {
+        if ("Tid".equalsIgnoreCase(resultatType)) {
+            // Assuming the input is in seconds as a string
+            return new BigDecimal(resultatværdi);
+        } else if ("Afstand".equalsIgnoreCase(resultatType)) {
+            return new BigDecimal(resultatværdi.replace(" m", ""));
+        }
+        return new BigDecimal(resultatværdi);
     }
 }

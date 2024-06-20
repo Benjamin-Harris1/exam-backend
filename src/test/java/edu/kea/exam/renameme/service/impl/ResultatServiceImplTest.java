@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +51,7 @@ class ResultatServiceImplTest {
         ResultatDTO resultatDTO = new ResultatDTO(1L, 1L, 1L, "Tid", LocalDate.now(), "00:10:00");
         Disciplin disciplin = new Disciplin(1L, "100-meterløb", "Tid");
         Deltager deltager = new Deltager(1L, "John Doe", "Mand", 25, "Klub A", Collections.singletonList(disciplin));
-        Resultat resultat = new Resultat(1L, deltager, disciplin, "Tid", LocalDate.now(), "00:10:00");
+        Resultat resultat = new Resultat(1L, deltager, disciplin, "Tid", LocalDate.now(), new BigDecimal("600"));
 
         when(deltagerRepository.findById(1L)).thenReturn(Optional.of(deltager));
         when(disciplinRepository.findById(1L)).thenReturn(Optional.of(disciplin));
@@ -87,8 +88,8 @@ class ResultatServiceImplTest {
         List<ResultatDTO> resultatDTOs = List.of(resultatDTO1, resultatDTO2);
         Disciplin disciplin = new Disciplin(1L, "100-meterløb", "Tid");
         Deltager deltager = new Deltager(1L, "John Doe", "Mand", 25, "Klub A", Collections.singletonList(disciplin));
-        Resultat resultat1 = new Resultat(1L, deltager, disciplin, "Tid", LocalDate.now(), "00:10:00");
-        Resultat resultat2 = new Resultat(2L, deltager, disciplin, "Tid", LocalDate.now(), "00:09:50");
+        Resultat resultat1 = new Resultat(1L, deltager, disciplin, "Tid", LocalDate.now(), new BigDecimal("600"));
+        Resultat resultat2 = new Resultat(2L, deltager, disciplin, "Tid", LocalDate.now(), new BigDecimal("590"));
 
         when(deltagerRepository.findById(1L)).thenReturn(Optional.of(deltager));
         when(disciplinRepository.findById(1L)).thenReturn(Optional.of(disciplin));
