@@ -2,46 +2,47 @@ package edu.kea.exam.renameme.service.impl;
 
 import edu.kea.exam.renameme.dto.DisciplinDTO;
 import edu.kea.exam.renameme.entity.Disciplin;
+import edu.kea.exam.renameme.mapper.DisciplinMapper;
+import edu.kea.exam.renameme.repository.DisciplinRepository;
 import edu.kea.exam.renameme.service.DisciplinService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DisciplinServiceImpl implements DisciplinService {
 
-    @Override
-    public List<DisciplinDTO> getAllDiscipliner() {
-        return null;
-    }
+    private final DisciplinRepository disciplinRepository;
+    private final DisciplinMapper disciplinMapper;
 
-    @Override
-    public DisciplinDTO getDisciplinById(Long id) {
-        return null;
+    public DisciplinServiceImpl(DisciplinRepository disciplinRepository, DisciplinMapper disciplinMapper) {
+        this.disciplinRepository = disciplinRepository;
+        this.disciplinMapper = disciplinMapper;
     }
 
     @Override
     public DisciplinDTO createDisciplin(DisciplinDTO disciplinDTO) {
-        return null;
+        Disciplin disciplin = disciplinMapper.toEntity(disciplinDTO);
+        return disciplinMapper.toDTO(disciplinRepository.save(disciplin));
     }
 
     @Override
     public DisciplinDTO updateDisciplin(Long id, DisciplinDTO disciplinDTO) {
-        return null;
+        Optional<Disciplin> existingDisciplin = disciplinRepository.findById(id);
+        if (existingDisciplin.isEmpty()) {
+            throw new RuntimeException("Disciplin med id " + id + " ikke fundet");
+        }
+        Disciplin disciplin = disciplinMapper.toEntity(disciplinDTO);
+        disciplin.setId(id);
+        Disciplin updatedDisciplin = disciplinRepository.save(disciplin);
+        return disciplinMapper.toDTO(updatedDisciplin);
     }
 
     @Override
     public void deleteDisciplin(Long id) {
-
-    }
-
-    @Override
-    public DisciplinDTO convertToDTO(Disciplin disciplin) {
-        return null;
-    }
-
-    @Override
-    public Disciplin convertToEntity(DisciplinDTO disciplinDTO) {
-        return null;
+        Disciplin disciplin = disciplinRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Disciplin ikke fundet"));
+        disciplinRepository.delete(disciplin);
     }
 }
