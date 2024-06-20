@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DeltagerRepository extends JpaRepository<Deltager, Long>{
+    List<Deltager> findByNavnContainingIgnoreCaseAndIsActiveTrue(String navn);
     List<Deltager> findAllByIsActiveTrue();
 
 }

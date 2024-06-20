@@ -36,6 +36,14 @@ public class DeltagerServiceImpl implements DeltagerService {
     }
 
     @Override
+    public List<DeltagerDTO> getDeltagerByName(String navn) {
+        List<Deltager> deltagere = deltagerRepository.findByNavnContainingIgnoreCaseAndIsActiveTrue(navn);
+        return deltagere.stream()
+                .map(deltagerMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     public DeltagerDTO createDeltager(DeltagerDTO deltagerDTO) {
         Deltager deltager = deltagerMapper.toEntity(deltagerDTO);
         deltager.setActive(true);

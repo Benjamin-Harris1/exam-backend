@@ -27,6 +27,11 @@ public class DeltagerController {
         return ResponseEntity.ok().body(deltagerService.getDeltagerById(id));
     }
 
+    @GetMapping("/name/{navn}")
+    public ResponseEntity<List<DeltagerDTO>> getDeltagerByName(@PathVariable String navn){
+        return ResponseEntity.ok().body(deltagerService.getDeltagerByName(navn));
+    }
+
     @PostMapping
     public ResponseEntity<DeltagerDTO> createDeltager(@RequestBody DeltagerDTO deltagerDTO){
         return ResponseEntity.ok().body(deltagerService.createDeltager(deltagerDTO));
