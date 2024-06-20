@@ -43,6 +43,7 @@ public class DisciplinServiceImpl implements DisciplinService {
         }
         Disciplin disciplin = disciplinMapper.toEntity(disciplinDTO);
         disciplin.setId(id);
+        disciplin.setActive(true);
         Disciplin updatedDisciplin = disciplinRepository.save(disciplin);
         return disciplinMapper.toDTO(updatedDisciplin);
     }

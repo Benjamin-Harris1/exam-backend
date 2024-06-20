@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class DeltagerServiceImplTest {
@@ -51,6 +52,7 @@ class DeltagerServiceImplTest {
     public void testGetDeltagerById() {
         // Arrange
         Deltager deltager = new Deltager();
+        deltager.setActive(true); // Ensure the Deltager is active
         DeltagerDTO deltagerDTO = new DeltagerDTO();
         when(deltagerRepository.findById(anyLong())).thenReturn(Optional.of(deltager));
         when(deltagerMapper.toDTO(any(Deltager.class))).thenReturn(deltagerDTO);
@@ -60,7 +62,7 @@ class DeltagerServiceImplTest {
 
         // Assert
         assertEquals(deltagerDTO, result);
-        verify(deltagerRepository, times(1)).findById(1L);
-    }
+            verify(deltagerRepository, times(1)).findById(1L);
+        }
 
 }

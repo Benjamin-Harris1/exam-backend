@@ -51,6 +51,7 @@ public class DeltagerServiceImpl implements DeltagerService {
 
         Deltager deltager = deltagerMapper.toEntity(deltagerDTO);
         deltager.setId(id);
+        deltager.setActive(true);
         Deltager updatedDeltager = deltagerRepository.save(deltager);
         return deltagerMapper.toDTO(updatedDeltager);
     }

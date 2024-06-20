@@ -1,7 +1,6 @@
 package edu.kea.exam.renameme.service;
 
 import edu.kea.exam.renameme.dto.DeltagerDTO;
-import edu.kea.exam.renameme.entity.Deltager;
 
 import java.util.List;
 
