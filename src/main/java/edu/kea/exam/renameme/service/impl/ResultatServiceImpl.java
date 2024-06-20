@@ -126,13 +126,13 @@ public class ResultatServiceImpl implements ResultatService {
 
     private void validateDeltagerDisciplinAssociation(Long deltagerId, Long disciplinId) {
         Deltager deltager = deltagerRepository.findById(deltagerId)
-                .orElseThrow(() -> new RuntimeException("Deltager not found with id: " + deltagerId));
+                .orElseThrow(() -> new RuntimeException("Deltager med id: " + deltagerId + " ikke fundet"));
         Disciplin disciplin = disciplinRepository.findById(disciplinId)
-                .orElseThrow(() -> new RuntimeException("Disciplin not found with id: " + disciplinId));
+                .orElseThrow(() -> new RuntimeException("Disciplin med id: " + disciplinId + " ikke fundet"));
 
         // Validate that the deltager is associated with the disciplin
         if (!deltager.getDiscipliner().contains(disciplin)) {
-            throw new IllegalArgumentException("Deltager is not associated with the given disciplin");
+            throw new IllegalArgumentException("Deltager er ikke tilknyttet denne disciplin");
         }
     }
 }

@@ -27,4 +27,10 @@ public class Disciplin {
         this.navn = navn;
         this.resultatType = resultatType;
     }
+
+    public Disciplin(Long id, String navn, String resultatType){
+        this.id = id;
+        this.navn = navn;
+        this.resultatType = resultatType;
+    }
 }
