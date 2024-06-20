@@ -44,6 +44,18 @@ public class ResultatServiceImpl implements ResultatService {
 
     @Override
     public List<ResultatDTO> createResultater(List<ResultatDTO> resultatDTOs) {
+        if (resultatDTOs.isEmpty()) {
+            throw new IllegalArgumentException("ResultatDTO liste må ikke være tom");
+        }
+
+        Long disciplinId = resultatDTOs.get(0).getDisciplinId();
+        boolean allSameDisciplin = resultatDTOs.stream()
+                .allMatch(dto -> dto.getDisciplinId().equals(disciplinId));
+
+        if (!allSameDisciplin) {
+            throw new IllegalArgumentException("Alle ResultatDTOs skal have samme disciplinId");
+        }
+
         List<Resultat> resultater = resultatDTOs.stream()
                 .map(resultatMapper::toEntity)
                 .collect(Collectors.toList());
