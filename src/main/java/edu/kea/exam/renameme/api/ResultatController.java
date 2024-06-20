@@ -22,6 +22,15 @@ public class ResultatController {
         return ResponseEntity.ok().body(resultatService.getAllResultater());
     }
 
+    @GetMapping("/disciplin/{disciplinId}")
+    public ResponseEntity<List<ResultatDTO>> getResultaterByDisciplin(
+            @PathVariable Long disciplinId,
+            @RequestParam(required = false) String køn,
+            @RequestParam(required = false) Integer minAlder,
+            @RequestParam(required = false) Integer maxAlder) {
+        return ResponseEntity.ok().body(resultatService.getResultaterByDisciplin(disciplinId, køn, minAlder, maxAlder));
+    }
+
     @PostMapping
     public ResponseEntity<ResultatDTO> createResultat(@RequestBody ResultatDTO resultatDTO){
         return ResponseEntity.ok().body(resultatService.createResultat(resultatDTO));

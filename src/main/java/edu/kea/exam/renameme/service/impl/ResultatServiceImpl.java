@@ -7,6 +7,7 @@ import edu.kea.exam.renameme.repository.ResultatRepository;
 import edu.kea.exam.renameme.service.ResultatService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,10 +31,33 @@ public class ResultatServiceImpl implements ResultatService {
     }
 
     @Override
-    public List<ResultatDTO> getResultaterByDiscipline(Long disciplineId, String køn, int alderFra, int alderTil) {
-        return resultatRepository.findByDisciplinIdAndDeltagerKønAndDeltagerAlderBetween(disciplineId, køn, alderFra, alderTil).stream()
+    public List<ResultatDTO> getResultaterByDisciplin(Long disciplinId, String køn, Integer minAlder, Integer maxAlder) {
+        List<Resultat> resultater = resultatRepository.findByDisciplinId(disciplinId);
+    
+        if (køn != null) {
+            resultater = resultater.stream()
+                    .filter(r -> r.getDeltager().getKøn().equalsIgnoreCase(køn))
+                    .collect(Collectors.toList());
+        }
+    
+        if (minAlder != null && maxAlder != null) {
+            resultater = resultater.stream()
+                    .filter(r -> r.getDeltager().getAlder() >= minAlder && r.getDeltager().getAlder() <= maxAlder)
+                    .collect(Collectors.toList());
+        }
+    
+        // Determine the sorting logic based on the resultatType
+        if (!resultater.isEmpty() && "Tid".equalsIgnoreCase(resultater.get(0).getResultatType())) {
+            // Sort from best to worst for 'Tid' (lower is better)
+            resultater.sort(Comparator.comparing(Resultat::getResultatværdi));
+        } else if (!resultater.isEmpty() && "Afstand".equalsIgnoreCase(resultater.get(0).getResultatType())) {
+            // Sort from best to worst for 'Afstand' (higher is better)
+            resultater.sort(Comparator.comparing(Resultat::getResultatværdi).reversed());
+        }
+    
+        return resultater.stream()
                 .map(resultatMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -48,10 +72,13 @@ public class ResultatServiceImpl implements ResultatService {
             throw new IllegalArgumentException("ResultatDTO liste må ikke være tom");
         }
 
+        // Get disciplinId from first resultatDTO in the list
         Long disciplinId = resultatDTOs.get(0).getDisciplinId();
+        // Check if all resultatDTOs in the list have the same disciplinId
         boolean allSameDisciplin = resultatDTOs.stream()
                 .allMatch(dto -> dto.getDisciplinId().equals(disciplinId));
 
+        // If not - throw error
         if (!allSameDisciplin) {
             throw new IllegalArgumentException("Alle ResultatDTOs skal have samme disciplinId");
         }

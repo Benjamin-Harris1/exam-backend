@@ -36,14 +36,14 @@ public class InitData implements CommandLineRunner {
             new Disciplin("400 meter hækkeløb", "Tid"),
             new Disciplin("4 × 100-meterløb", "Tid"),
             new Disciplin("4 × 400-meterløb", "Tid"),
-            new Disciplin("Højdespring", "Højde"),
-            new Disciplin("Længdespring", "Længde"),
-            new Disciplin("Trespring", "Længde"),
-            new Disciplin("Stangspring", "Højde"),
-            new Disciplin("Kuglestød", "Længde"),
-            new Disciplin("Diskoskast", "Længde"),
-            new Disciplin("Spydkast", "Længde"),
-            new Disciplin("Hammerkast", "Længde")
+            new Disciplin("Højdespring", "Afstand"),
+            new Disciplin("Længdespring", "Afstand"),
+            new Disciplin("Trespring", "Afstand"),
+            new Disciplin("Stangspring", "Afstand"),
+            new Disciplin("Kuglestød", "Afstand"),
+            new Disciplin("Diskoskast", "Afstand"),
+            new Disciplin("Spydkast", "Afstand"),
+            new Disciplin("Hammerkast", "Afstand")
         );
     disciplinRepository.saveAll(discipliner);
     }
