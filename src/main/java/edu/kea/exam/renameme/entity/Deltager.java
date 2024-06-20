@@ -27,4 +27,13 @@ public class Deltager {
     private List<Disciplin> discipliner;
 
 
+    public Deltager(String navn, String køn, int alder, String klub, List<Disciplin> discipliner) {
+        this.navn = navn;
+        this.køn = køn;
+        this.alder = alder;
+        this.klub = klub;
+        this.discipliner = discipliner;
+    }
+
+
 }

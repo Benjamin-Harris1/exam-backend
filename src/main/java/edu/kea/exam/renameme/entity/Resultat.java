@@ -28,4 +28,12 @@ public class Resultat {
     private String resultatType;
     private LocalDate dato;
     private String resultatværdi;
+
+    public Resultat(Deltager deltager, Disciplin disciplin, String resultatType, LocalDate dato, String resultatværdi) {
+        this.deltager = deltager;
+        this.disciplin = disciplin;
+        this.resultatType = resultatType;
+        this.dato = dato;
+        this.resultatværdi = resultatværdi;
+    }
 }
