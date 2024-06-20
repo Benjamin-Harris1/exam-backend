@@ -5,6 +5,8 @@ import edu.kea.exam.renameme.service.DisciplinService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/discipliner")
 public class DisciplinController {
@@ -13,6 +15,11 @@ public class DisciplinController {
 
     public DisciplinController(DisciplinService disciplinService) {
         this.disciplinService = disciplinService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DisciplinDTO>> getAllDiscipliner(){
+        return ResponseEntity.ok().body(disciplinService.getAllDiscipliner());
     }
 
     @PostMapping

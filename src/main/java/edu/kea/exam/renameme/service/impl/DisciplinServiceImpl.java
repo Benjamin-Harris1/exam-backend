@@ -22,6 +22,13 @@ public class DisciplinServiceImpl implements DisciplinService {
     }
 
     @Override
+    public List<DisciplinDTO> getAllDiscipliner() {
+        return disciplinRepository.findAll().stream()
+                .map(disciplinMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     public DisciplinDTO createDisciplin(DisciplinDTO disciplinDTO) {
         Disciplin disciplin = disciplinMapper.toEntity(disciplinDTO);
         return disciplinMapper.toDTO(disciplinRepository.save(disciplin));
