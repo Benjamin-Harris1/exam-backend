@@ -1,8 +1,12 @@
 package edu.kea.exam.renameme.service.impl;
 
 import edu.kea.exam.renameme.dto.ResultatDTO;
+import edu.kea.exam.renameme.entity.Deltager;
+import edu.kea.exam.renameme.entity.Disciplin;
 import edu.kea.exam.renameme.entity.Resultat;
 import edu.kea.exam.renameme.mapper.ResultatMapper;
+import edu.kea.exam.renameme.repository.DeltagerRepository;
+import edu.kea.exam.renameme.repository.DisciplinRepository;
 import edu.kea.exam.renameme.repository.ResultatRepository;
 import edu.kea.exam.renameme.service.ResultatService;
 import org.springframework.stereotype.Service;
@@ -16,10 +20,14 @@ import java.util.stream.Collectors;
 public class ResultatServiceImpl implements ResultatService {
 
     private final ResultatRepository resultatRepository;
+    private final DeltagerRepository deltagerRepository;
+    private final DisciplinRepository disciplinRepository;
     private final ResultatMapper resultatMapper;
 
-    public ResultatServiceImpl(ResultatRepository resultatRepository, ResultatMapper resultatMapper) {
+    public ResultatServiceImpl(ResultatRepository resultatRepository, DeltagerRepository deltagerRepository, DisciplinRepository disciplinRepository, ResultatMapper resultatMapper) {
         this.resultatRepository = resultatRepository;
+        this.deltagerRepository = deltagerRepository;
+        this.disciplinRepository = disciplinRepository;
         this.resultatMapper = resultatMapper;
     }
 
@@ -62,6 +70,8 @@ public class ResultatServiceImpl implements ResultatService {
 
     @Override
     public ResultatDTO createResultat(ResultatDTO resultatDTO) {
+        // Use helper method to validate that the deltager is associated with the discipline
+        validateDeltagerDisciplinAssociation(resultatDTO.getDeltagerId(), resultatDTO.getDisciplinId());
         Resultat resultat = resultatMapper.toEntity(resultatDTO);
         return resultatMapper.toDTO(resultatRepository.save(resultat));
     }
@@ -84,7 +94,10 @@ public class ResultatServiceImpl implements ResultatService {
         }
 
         List<Resultat> resultater = resultatDTOs.stream()
-                .map(resultatMapper::toEntity)
+                .map(resultatDTO -> {
+                    validateDeltagerDisciplinAssociation(resultatDTO.getDeltagerId(), resultatDTO.getDisciplinId());
+                    return resultatMapper.toEntity(resultatDTO);
+                })
                 .collect(Collectors.toList());
         return resultatRepository.saveAll(resultater).stream()
                 .map(resultatMapper::toDTO)
@@ -109,5 +122,17 @@ public class ResultatServiceImpl implements ResultatService {
         Resultat resultat = resultatRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resultat ikke fundet"));
         resultatRepository.delete(resultat);
+    }
+
+    private void validateDeltagerDisciplinAssociation(Long deltagerId, Long disciplinId) {
+        Deltager deltager = deltagerRepository.findById(deltagerId)
+                .orElseThrow(() -> new RuntimeException("Deltager not found with id: " + deltagerId));
+        Disciplin disciplin = disciplinRepository.findById(disciplinId)
+                .orElseThrow(() -> new RuntimeException("Disciplin not found with id: " + disciplinId));
+
+        // Validate that the deltager is associated with the disciplin
+        if (!deltager.getDiscipliner().contains(disciplin)) {
+            throw new IllegalArgumentException("Deltager is not associated with the given disciplin");
+        }
     }
 }
