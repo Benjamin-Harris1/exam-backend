@@ -60,14 +60,4 @@ public class DeltagerServiceImpl implements DeltagerService {
         deltagerRepository.delete(deltager);
 
     }
-
-    @Override
-    public DeltagerDTO convertToDTO(Deltager deltager) {
-        return deltagerMapper.toDTO(deltager);
-    }
-
-    @Override
-    public Deltager convertToEntity(DeltagerDTO deltagerDTO) {
-        return deltagerMapper.toEntity(deltagerDTO);
-    }
 }

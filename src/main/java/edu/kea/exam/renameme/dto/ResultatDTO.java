@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ResultatDTO {
     private Long id;
-    private DeltagerDTO deltager;
-    private DisciplinDTO disciplin;
+    private Long deltagerId;
+    private Long disciplinId;
     private String resultatType;
     private LocalDate dato;
     private String resultatværdi;

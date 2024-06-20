@@ -11,6 +11,4 @@ public interface DeltagerService {
     DeltagerDTO createDeltager(DeltagerDTO deltagerDTO);
     DeltagerDTO updateDeltager(Long id, DeltagerDTO deltagerDTO);
     void deleteDeltager(Long id);
-    DeltagerDTO convertToDTO(Deltager deltager);
-    Deltager convertToEntity(DeltagerDTO deltagerDTO);
 }
