@@ -32,6 +32,16 @@ public class DeltagerController {
         return ResponseEntity.ok().body(deltagerService.getDeltagerByName(navn));
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<DeltagerDTO>> getFilteredDeltagere(
+        @RequestParam(required = false) String køn,
+        @RequestParam(required = false) Integer minAlder,
+        @RequestParam(required = false) Integer maxAlder,
+        @RequestParam(required = false) String klub,
+        @RequestParam(required = false) String disciplin) {
+    return ResponseEntity.ok().body(deltagerService.getFilteredDeltagere(køn, minAlder, maxAlder, klub, disciplin));
+    }
+
     @PostMapping
     public ResponseEntity<DeltagerDTO> createDeltager(@RequestBody DeltagerDTO deltagerDTO){
         return ResponseEntity.ok().body(deltagerService.createDeltager(deltagerDTO));

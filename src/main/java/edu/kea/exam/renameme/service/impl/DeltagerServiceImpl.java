@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DeltagerServiceImpl implements DeltagerService {
@@ -41,6 +42,40 @@ public class DeltagerServiceImpl implements DeltagerService {
         return deltagere.stream()
                 .map(deltagerMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public List<DeltagerDTO> getFilteredDeltagere(String køn, Integer minAlder, Integer maxAlder, String klub, String disciplin) {
+    List<Deltager> deltagere = deltagerRepository.findAllByIsActiveTrue();
+
+    if (køn != null) {
+        deltagere = deltagere.stream()
+                .filter(d -> d.getKøn().equalsIgnoreCase(køn))
+                .collect(Collectors.toList());
+    }
+
+    if (minAlder != null && maxAlder != null) {
+        deltagere = deltagere.stream()
+                .filter(d -> d.getAlder() >= minAlder && d.getAlder() <= maxAlder)
+                .collect(Collectors.toList());
+    }
+
+    if (klub != null) {
+        deltagere = deltagere.stream()
+                .filter(d -> d.getKlub().equalsIgnoreCase(klub))
+                .collect(Collectors.toList());
+    }
+
+    if (disciplin != null) {
+        deltagere = deltagere.stream()
+                .filter(d -> d.getDiscipliner().stream()
+                        .anyMatch(disc -> disc.getNavn().equalsIgnoreCase(disciplin)))
+                .collect(Collectors.toList());
+    }
+
+    return deltagere.stream()
+            .map(deltagerMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
