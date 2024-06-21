@@ -73,6 +73,10 @@ public class ResultatServiceImpl implements ResultatService {
     public ResultatDTO createResultat(ResultatDTO resultatDTO) {
         // Use helper method to validate that the deltager is associated with the discipline
         validateDeltagerDisciplinAssociation(resultatDTO.getDeltagerId(), resultatDTO.getDisciplinId());
+
+        // Validate that the resultat type matches the discipline's result type
+        validateResultatType(resultatDTO);
+
         Resultat resultat = resultatMapper.toEntity(resultatDTO);
         return resultatMapper.toDTO(resultatRepository.save(resultat));
     }
@@ -97,6 +101,7 @@ public class ResultatServiceImpl implements ResultatService {
         List<Resultat> resultater = resultatDTOs.stream()
                 .map(resultatDTO -> {
                     validateDeltagerDisciplinAssociation(resultatDTO.getDeltagerId(), resultatDTO.getDisciplinId());
+                    validateResultatType(resultatDTO);
                     return resultatMapper.toEntity(resultatDTO);
                 })
                 .collect(Collectors.toList());
@@ -111,6 +116,8 @@ public class ResultatServiceImpl implements ResultatService {
         if (existingResultat.isEmpty()) {
             throw new RuntimeException("Resultat med id " + id + " ikke fundet");
         }
+
+        validateResultatType(resultatDTO);
 
         Resultat resultat = resultatMapper.toEntity(resultatDTO);
         resultat.setId(id);
@@ -134,6 +141,15 @@ public class ResultatServiceImpl implements ResultatService {
         // Validate that the deltager is associated with the disciplin
         if (!deltager.getDiscipliner().contains(disciplin)) {
             throw new IllegalArgumentException("Deltager er ikke tilknyttet denne disciplin");
+        }
+    }
+
+    private void validateResultatType(ResultatDTO resultatDTO) {
+        Disciplin disciplin = disciplinRepository.findById(resultatDTO.getDisciplinId())
+                .orElseThrow(() -> new RuntimeException("Disciplin med id: " + resultatDTO.getDisciplinId() + " ikke fundet"));
+
+        if (!disciplin.getResultatType().equalsIgnoreCase(resultatDTO.getResultatType())) {
+            throw new IllegalArgumentException("Resultat type matcher ikke disciplinens resultat type");
         }
     }
 }
