@@ -51,25 +51,37 @@ public class ResultatMapper {
 
     private String formatResultatværdi(BigDecimal resultatværdi, String resultatType) {
         if ("Tid".equalsIgnoreCase(resultatType)) {
-            long totalSeconds = resultatværdi.longValue();
-            LocalTime time = LocalTime.ofSecondOfDay(totalSeconds);
+            // Convert the value to milliseconds
+            long totalMilliseconds = resultatværdi.multiply(BigDecimal.valueOf(1000)).longValue();
+
+            //Convert milliseconds to Localtime
+            LocalTime time = LocalTime.ofNanoOfDay(totalMilliseconds * 1_000_000);
+
+            // Format the time using TIME_FORMATTER
             return TIME_FORMATTER.format(time);
         } else if ("Afstand".equalsIgnoreCase(resultatType)) {
+            // Format the distance value with " m" suffix
             return DISTANCE_FORMATTER.format(resultatværdi) + " m";
         }
+        // Return the value as a string if the type is neither of these
         return resultatværdi.toString();
     }
 
     private BigDecimal parseResultatværdi(String resultatværdi, String resultatType) {
         if ("Tid".equalsIgnoreCase(resultatType)) {
-            // Convert time string "HH:MM:SS:SS" to seconds
+            // Parse the time string to localtime
             LocalTime time = LocalTime.parse(resultatværdi, TIME_FORMATTER);
-            long totalSeconds = time.toSecondOfDay();
-            return BigDecimal.valueOf(totalSeconds);
+
+            // Convert the time to milliseconds
+            long totalMilliseconds = time.toNanoOfDay() / 1_000_000;
+
+            // Convert milliseconds to seconds as BigDecimal
+            return BigDecimal.valueOf(totalMilliseconds).divide(BigDecimal.valueOf(1000));
         } else if ("Afstand".equalsIgnoreCase(resultatType)) {
             // Replace comma with dot and remove the " m" suffix
             return new BigDecimal(resultatværdi.replace(" m", "").replace(",", "."));
         }
+        // Return the value as BigDecimal if the type is neither of these
         return new BigDecimal(resultatværdi);
     }
 }
