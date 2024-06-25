@@ -62,8 +62,10 @@ public class ResultatMapper {
 
     private BigDecimal parseResultatværdi(String resultatværdi, String resultatType) {
         if ("Tid".equalsIgnoreCase(resultatType)) {
-            // Assuming the input is in seconds as a string
-            return new BigDecimal(resultatværdi);
+            // Convert time string "HH:MM:SS:SS" to seconds
+            LocalTime time = LocalTime.parse(resultatværdi, TIME_FORMATTER);
+            long totalSeconds = time.toSecondOfDay();
+            return BigDecimal.valueOf(totalSeconds);
         } else if ("Afstand".equalsIgnoreCase(resultatType)) {
             return new BigDecimal(resultatværdi.replace(" m", ""));
         }
