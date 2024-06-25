@@ -67,7 +67,8 @@ public class ResultatMapper {
             long totalSeconds = time.toSecondOfDay();
             return BigDecimal.valueOf(totalSeconds);
         } else if ("Afstand".equalsIgnoreCase(resultatType)) {
-            return new BigDecimal(resultatværdi.replace(" m", ""));
+            // Replace comma with dot and remove the " m" suffix
+            return new BigDecimal(resultatværdi.replace(" m", "").replace(",", "."));
         }
         return new BigDecimal(resultatværdi);
     }
