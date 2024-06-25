@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ResultatRepository extends JpaRepository<Resultat, Long> {
     List<Resultat> findByDisciplinId(Long disciplinId);
+    List<Resultat> findByDeltagerId(Long deltagerId);
 }

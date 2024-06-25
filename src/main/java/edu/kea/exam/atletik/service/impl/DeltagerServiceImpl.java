@@ -2,8 +2,10 @@ package edu.kea.exam.atletik.service.impl;
 
 import edu.kea.exam.atletik.dto.DeltagerDTO;
 import edu.kea.exam.atletik.entity.Deltager;
+import edu.kea.exam.atletik.entity.Resultat;
 import edu.kea.exam.atletik.mapper.DeltagerMapper;
 import edu.kea.exam.atletik.repository.DeltagerRepository;
+import edu.kea.exam.atletik.repository.ResultatRepository;
 import edu.kea.exam.atletik.service.DeltagerService;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,12 @@ import java.util.stream.Collectors;
 public class DeltagerServiceImpl implements DeltagerService {
 
     private final DeltagerRepository deltagerRepository;
+    private final ResultatRepository resultatRepository;
     private final DeltagerMapper deltagerMapper;
 
-    public DeltagerServiceImpl(DeltagerRepository deltagerRepository, DeltagerMapper deltagerMapper) {
+    public DeltagerServiceImpl(DeltagerRepository deltagerRepository, ResultatRepository resultatRepository, DeltagerMapper deltagerMapper) {
         this.deltagerRepository = deltagerRepository;
+        this.resultatRepository = resultatRepository;
         this.deltagerMapper = deltagerMapper;
     }
 
@@ -106,5 +110,8 @@ public class DeltagerServiceImpl implements DeltagerService {
         deltager.setActive(false);
         deltagerRepository.save(deltager);
 
+        // Delete related resultat entity
+        List<Resultat> resultater = resultatRepository.findByDeltagerId(id);
+        resultatRepository.deleteAll(resultater);
     }
 }
