@@ -1,9 +1,13 @@
 package edu.kea.exam.atletik.service.impl;
 
 import edu.kea.exam.atletik.dto.DisciplinDTO;
+import edu.kea.exam.atletik.entity.Deltager;
 import edu.kea.exam.atletik.entity.Disciplin;
+import edu.kea.exam.atletik.entity.Resultat;
 import edu.kea.exam.atletik.mapper.DisciplinMapper;
+import edu.kea.exam.atletik.repository.DeltagerRepository;
 import edu.kea.exam.atletik.repository.DisciplinRepository;
+import edu.kea.exam.atletik.repository.ResultatRepository;
 import edu.kea.exam.atletik.service.DisciplinService;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +18,14 @@ import java.util.Optional;
 public class DisciplinServiceImpl implements DisciplinService {
 
     private final DisciplinRepository disciplinRepository;
+    private final ResultatRepository resultatRepository;
+    private final DeltagerRepository deltagerRepository;
     private final DisciplinMapper disciplinMapper;
 
-    public DisciplinServiceImpl(DisciplinRepository disciplinRepository, DisciplinMapper disciplinMapper) {
+    public DisciplinServiceImpl(DisciplinRepository disciplinRepository, ResultatRepository resultatRepository, DeltagerRepository deltagerRepository, DisciplinMapper disciplinMapper) {
         this.disciplinRepository = disciplinRepository;
+        this.resultatRepository = resultatRepository;
+        this.deltagerRepository = deltagerRepository;
         this.disciplinMapper = disciplinMapper;
     }
 
@@ -54,5 +62,18 @@ public class DisciplinServiceImpl implements DisciplinService {
                 .orElseThrow(() -> new RuntimeException("Disciplin ikke fundet"));
         disciplin.setActive(false);
         disciplinRepository.save(disciplin);
+
+        // Remove the disciplin from all associated deltagere
+        List<Deltager> deltagere = deltagerRepository.findAll();
+        for (Deltager deltager : deltagere) {
+            if (deltager.getDiscipliner().contains(disciplin)) {
+                deltager.getDiscipliner().remove(disciplin);
+                deltagerRepository.save(deltager);
+            }
+        }
+
+        // Delete all related resultater
+        List<Resultat> resultater = resultatRepository.findByDisciplinId(id);
+        resultatRepository.deleteAll(resultater);
     }
 }
